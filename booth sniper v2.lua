@@ -1,7 +1,7 @@
 local osclock = os.clock()
 repeat task.wait() until game:IsLoaded()
 
-setfpscap(40)
+setfpscap(60)
 game:GetService("RunService"):Set3dRenderingEnabled(false)
 local Booths_Broadcast = game:GetService("ReplicatedStorage").Network:WaitForChild("Booths_Broadcast")
 local Players = game:GetService('Players')
@@ -56,11 +56,16 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	end
 	if snipeNormal == true then
 	    weburl = normalwebhook
+	    snipeNormal = false
 	end
     else
 	webcolor = tonumber(0xff0000)
 	weburl = webhookFail
 	snipeMessage = snipeMessage .. " failed to snipe a "
+	if snipeNormal == true then
+	    weburl = normalwebhook
+	    snipeNormal = false
+	end
     end
     
     snipeMessage = snipeMessage .. "**" .. version
@@ -133,7 +138,6 @@ local function checklisting(uid, gems, item, version, shiny, amount, username, p
     local purchase = rs.Network.Booths_RequestPurchase
     gems = tonumber(gems)
     local ping = false
-    snipeNormal = false
     local type = {}
     pcall(function()
         type = Library.Directory.Pets[item]
@@ -198,7 +202,6 @@ local function checklisting(uid, gems, item, version, shiny, amount, username, p
         processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping) 
     end
 end
-
 Booths_Broadcast.OnClientEvent:Connect(function(username, message)
     local playerIDSuccess, playerError = pcall(function()
 	playerID = message['PlayerID']
